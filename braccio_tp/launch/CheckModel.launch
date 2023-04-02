@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+    
+	<include file="$(find  braccio_tp)/launch/RunRobotSliders.launch"/>    
+        
+    <include file="$(find braccio_tp)/launch/RunAruco.launch">
+        <!-- FIXME CANNOT OVERWRITE THE OPTION SET IN RunAruco ??     -->
+             <arg name="webcam_calibration" value="file://$(find braccio_tp)/results/usb_cam_c170.yaml"/>
+    </include>
+
+    <include file="$(find braccio_tp)/launch/MarkersBroadcast.launch"/>
+    
+    <node name="modele_check" pkg="braccio_tp" type="check_MGD"/>
+    
+    
+    
+  </launch>

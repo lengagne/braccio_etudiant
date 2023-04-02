@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="webcam"        default="/dev/video0"/>    
+    <arg name="joystick"        default="/dev/input/js2"/>
+       
+    <include file="$(find braccio_tp)/launch/CubeControl.launch">
+        <arg name="webcam" value="$(arg webcam)"/>
+        <arg name="joystick" value="$(arg joystick)"/>
+    </include>
+        
+    <node name="pick_and_place" pkg="braccio_tp" type="pick_and_place"/>
+    
+  </launch>

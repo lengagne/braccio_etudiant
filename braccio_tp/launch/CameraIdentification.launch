@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="webcam"        default="/dev/video0"/>
+    
+    <include file="$(find braccio_tp)/launch/RunWebcam.launch">
+        <arg name="webcam" value="$(arg webcam)"/>
+    </include>
+
+	<node pkg="camera_calibration" type="cameracalibrator.py" name="Calibrator">
+		<remap from="/camera" to="/usb_cam" />
+		<remap from="/image" to="/usb_cam/image_raw" />
+		<param name="size" value="8x6"/>
+		<param name="square"        value="0.0241"/>
+	</node>	
+
+	
+</launch>

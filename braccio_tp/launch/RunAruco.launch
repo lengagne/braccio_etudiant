@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="webcam"        default="/dev/video0"/>
+    <arg name="webcam_calibration"        default="file://$(find braccio_tp)/results/usb_cam_c170.yaml"/>
+    
+    <include file="$(find braccio_tp)/launch/RunWebcam.launch">
+        <arg name="webcam" value="$(arg webcam)"/>
+        <arg name="webcam_calibration" value="$(arg webcam_calibration)"/>
+    </include>
+	
+	<node name="viewer" pkg="image_view" type="image_view">
+		<remap from="/image" to="/aruco_marker_publisher/result"/>
+	</node>
+	
+
+	<node pkg="aruco_ros" type="marker_publisher" name="aruco_marker_publisher">
+		<remap from="/camera_info" to="/usb_cam/camera_info" />
+		<remap from="/image" to="/usb_cam/image_raw" />
+		<param name="image_is_rectified" value="True"/>
+                <param name="camera_frame"       value="usb_cam"/>   
+                <param name="reference_frame"    value="usb_cam"/>   <!-- frame in which the marker pose will be refered -->
+		<param name="marker_size"        value="0.024"/>
+	</node>	
+
+	
+</launch>

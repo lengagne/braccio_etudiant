@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<launch>
+
+    
+    <arg name="model" default="$(find braccio_arduino_ros_rviz)/urdf/braccio_arm.urdf"/>
+    <arg name="rvizconfig" default="$(find braccio_arduino_ros_rviz)/rviz/urdf.rviz" />
+
+    <param name="robot_description" command="$(find xacro)/xacro.py $(arg model)"/>
+
+<!--    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <param name="use_gui" value="false"/>
+    </node>-->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />    
+    
+    
+<!-- 	<node name="robot_publisher" pkg="braccio_arduino_ros_rviz" type="parse_and_publish"/> -->
+
+	<node name="robot_usb" pkg="rosserial_python" type="serial_node.py">
+		 <param name="~port" value="/dev/ttyACM0" />	
+	</node>
+
+    <node name="robot_mover" pkg="braccio_tp" type="robot_mover"/> 
+
+</launch>

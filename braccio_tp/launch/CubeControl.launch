@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="webcam"        default="/dev/video0"/>    
+    <arg name="joystick"        default="/dev/input/js2"/>
+       
+    <include file="$(find braccio_tp)/launch/RunAruco.launch">
+        <arg name="webcam" value="$(arg webcam)"/>
+    </include>
+    
+    <node name="joystick" pkg="joy" type="joy_node">
+        <param name="dev" value="$(arg joystick)"/>
+    </node>    
+        
+    <node name="control_cube" pkg="braccio_tp" type="robot_control_cube"/>
+    
+    <include file="$(find braccio_tp)/launch/RunRobot.launch"/>
+    
+    <include file="$(find  braccio_tp)/launch/MarkersBroadcast.launch"/>    
+    
+  </launch>

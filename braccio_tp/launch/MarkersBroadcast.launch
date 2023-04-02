@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>  
+    
+    <param name="braccio_tp/static_markers" type="string" value="$(find braccio_tp)/config/static_markers.yaml" />
+    <node name="MarkerBroadCast" pkg="braccio_tp" type="marker_broadcast"/>
+    
+</launch>
