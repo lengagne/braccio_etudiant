@@ -19,7 +19,7 @@ class AprilTagVisualizer(Node):
 
     def detection_callback(self, msg):
         self.latest_detections = msg
-        self.get_logger().info(f'Received {len(msg.detections)} detections')
+        # self.get_logger().info(f'Received {len(msg.detections)} detections')
 
     def image_callback(self, msg):
 
