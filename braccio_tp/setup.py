@@ -24,6 +24,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'show_april_tags=braccio_tp.show_april_tags:main'
         ],
     },
 )
