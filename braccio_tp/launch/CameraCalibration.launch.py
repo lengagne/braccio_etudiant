@@ -1,0 +1,103 @@
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+
+def generate_launch_description():
+    # Arguments
+    webcam_arg = DeclareLaunchArgument(
+        'webcam',
+        default_value='/dev/video0',
+        description='Chemin du périphérique webcam'
+    )
+
+    pattern_width_arg = DeclareLaunchArgument(
+        'pattern_width',
+        default_value='8',
+        description='Nombre de coins intérieurs en largeur du damier'
+    )
+
+    pattern_height_arg = DeclareLaunchArgument(
+        'pattern_height',
+        default_value='6',
+        description='Nombre de coins intérieurs en hauteur du damier'
+    )
+
+    square_size_arg = DeclareLaunchArgument(
+        'square_size',
+        default_value='0.0241',
+        description='Taille d\'un carré du damier en mètres'
+    )
+
+    num_images_arg = DeclareLaunchArgument(
+        'num_images',
+        default_value='20',
+        description='Nombre d\'images à capturer pour la calibration'
+    )
+
+    # Configurations
+    webcam = LaunchConfiguration('webcam')
+    pattern_width = LaunchConfiguration('pattern_width')
+    pattern_height = LaunchConfiguration('pattern_height')
+    square_size = LaunchConfiguration('square_size')
+    num_images = LaunchConfiguration('num_images')
+
+    # Node usb_cam
+    usb_cam_node = Node(
+        package='usb_cam',
+        executable='usb_cam_node_exe',
+        name='usb_cam',
+        namespace='usb_cam',
+        parameters=[{
+            'video_device': webcam,
+            'framerate': 30.0,
+            'image_width': 640,
+            'image_height': 480,
+            'pixel_format': 'yuyv',
+            'camera_frame_id': 'usb_cam',
+            'io_method': 'mmap',
+
+        }],
+        output='screen'
+    )
+
+    image_converter_node = Node(
+        package='braccio_tp',
+        executable='image_converter',  # Script à créer
+        name='image_converter',
+        remappings=[
+            ('image_in', '/usb_cam/image_raw'),
+            ('image_out', '/usb_cam/image_converted'),
+        ],
+        output='screen'
+    )
+
+    # Node de calibration OpenCV
+    calibrator_node = Node(
+        package='braccio_tp',
+        executable='camera_calibrator',
+        name='camera_calibrator',
+        parameters=[{
+            'pattern_width': pattern_width,
+            'pattern_height': pattern_height,
+            'square_size': square_size,
+            'num_images': num_images,
+        }],
+        remappings=[
+            ('image_raw', 'usb_cam/image_raw'),
+        ],
+        output='screen'
+    )
+
+    return LaunchDescription([
+        webcam_arg,
+        pattern_width_arg,
+        pattern_height_arg,
+        square_size_arg,
+        num_images_arg,
+        usb_cam_node,
+        image_converter_node,
+        calibrator_node,
+    ])
