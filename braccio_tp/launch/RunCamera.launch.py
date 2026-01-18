@@ -47,56 +47,6 @@ def generate_launch_description():
         output='screen'
     )
 
-    # Node AprilTag
-    apriltag_node = Node(
-        package='apriltag_ros',
-        executable='apriltag_node',
-        name='apriltag_node',
-        remappings=[
-            ('image_rect', 'usb_cam/image_raw'),
-            ('camera_info', 'usb_cam/camera_info'),
-        ],
-        parameters=[{
-            'image_transport': 'raw',
-            'publish_tf': False,
-            'family': '36h11',
-            'size': 0.03,
-            'max_hamming': 0,
-            'z_aligned': False,  # <-- Ajoutez ceci
-        }],
-        # parameters=[
-        #     config_file,
-        #     {
-        #         'image_transport': 'raw',
-        #         'publish_tf': False,  # <-- NE PAS publier les TF
-        #     }
-        # ],
-        output='screen'
-    )
-
-    # Ajoutez ce node dans SeeAprilTags.launch.py
-    pose_estimator_node = Node(
-        package='braccio_tp',
-        executable='apriltag_pose_estimator',
-        name='apriltag_pose_estimator',
-        parameters=[{
-            'tag_size': 0.03,  # <-- Mettez la vraie taille de vos tags
-        }],
-        output='screen'
-    )
-
-
-    # Node pour afficher les AprilTags
-    show_april_tags_node = Node(
-        package='braccio_tp',
-        executable='show_april_tags',
-        name='show_april_tags',
-        output='screen',
-        remappings=[
-            ('image_raw', 'usb_cam/image_raw'),
-        ],
-    )
-
     # Node rqt_image_view
     rqt_image_view_node = Node(
         package='rqt_image_view',
@@ -108,8 +58,5 @@ def generate_launch_description():
     return LaunchDescription([
         camera_device_arg,
         usb_cam_node,
-        apriltag_node,
-        show_april_tags_node,
         rqt_image_view_node,
-        pose_estimator_node,
     ])

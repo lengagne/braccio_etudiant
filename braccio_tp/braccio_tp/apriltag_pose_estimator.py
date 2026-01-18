@@ -5,7 +5,7 @@ from rclpy.node import Node
 from apriltag_msgs.msg import AprilTagDetectionArray
 from geometry_msgs.msg import PoseStamped, PoseArray
 from sensor_msgs.msg import CameraInfo
-from braccio_tp.msg import AprilTagPose, AprilTagPoseArray
+from braccio_msg.msg import AprilTagPose, AprilTagPoseArray
 import numpy as np
 import cv2
 
