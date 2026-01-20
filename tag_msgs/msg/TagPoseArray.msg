@@ -1,2 +1,2 @@
 std_msgs/Header header
-AprilTagPose[] tags
+TagPose[] tags
