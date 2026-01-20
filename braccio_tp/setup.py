@@ -28,10 +28,11 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'show_april_tags=braccio_tp.show_april_tags:main'
-            'apriltag_pose=braccio_tp.apriltag_pose:main'
-            'camera_calibrator=braccio_tp.camera_calibrator:main'
-            'imaghe_converter=braccio_tp.imaghe_converter:main'
+            'localize_objects=braccio_tp.localize_objects:main'
         ],
+            # 'show_april_tags=braccio_tp.show_april_tags:main'
+            # 'apriltag_pose=braccio_tp.apriltag_pose:main'
+            # 'camera_calibrator=braccio_tp.camera_calibrator:main'
+            # 'imaghe_converter=braccio_tp.imaghe_converter:main'
     },
 )
