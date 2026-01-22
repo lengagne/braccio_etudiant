@@ -28,7 +28,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'localize_objects=braccio_tp.localize_objects:main'
+            'localisation=braccio_tp.utils.localisation_node:main'
+            # 'localize_objects=braccio_tp.localize_objects:main'
         ],
             # 'show_april_tags=braccio_tp.show_april_tags:main'
             # 'apriltag_pose=braccio_tp.apriltag_pose:main'

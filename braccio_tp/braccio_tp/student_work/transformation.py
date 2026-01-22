@@ -1,6 +1,17 @@
 import numpy as np
 from math import sin, cos, pi
 
+
+def quaternion_to_rotation_matrix(x, y, z, w):
+    rotation = np.array([
+        [1 - 2*(y*y + z*z),     2*(x*y - w*z),     2*(x*z + w*y)],
+        [    2*(x*y + w*z), 1 - 2*(x*x + z*z),     2*(y*z - w*x)],
+        [    2*(x*z - w*y),     2*(y*z + w*x), 1 - 2*(x*x + y*y)]
+    ])
+
+    return rotation
+
+
 class Transformation:
     def __init__(self, rotation=np.eye(3), position=np.zeros(3)):
         """

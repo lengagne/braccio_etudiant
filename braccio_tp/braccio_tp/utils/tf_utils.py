@@ -2,13 +2,18 @@
 """
 Utilitaires pour la gestion des transformations TF
 """
-
+from rclpy.duration import Duration
 from geometry_msgs.msg import TransformStamped, Pose, PoseStamped
 from tf2_ros import TransformBroadcaster, StaticTransformBroadcaster, Buffer, TransformListener
 from tf2_ros import LookupException, ConnectivityException, ExtrapolationException
 import tf2_geometry_msgs
-from rclpy.duration import Duration
 import math
+import numpy as np
+
+from ..student_work.transformation import quaternion_to_rotation_matrix
+from ..student_work.transformation import Transformation
+
+
 
 
 class TFPublisher:
@@ -65,3 +70,19 @@ class TFPublisher:
 
         # Publier
         self.tf_broadcaster.sendTransform(t)
+
+
+def pose_to_transformation (pose_stamped):
+        """Crée une Transformation depuis un message PoseStamped ROS2"""
+        # Extraire position
+        position = np.array([
+            pose_stamped.pose.position.x,
+            pose_stamped.pose.position.y,
+            pose_stamped.pose.position.z
+        ])
+
+        # Extraire quaternion et convertir en matrice de rotation
+        q = pose_stamped.pose.orientation
+        rotation = quaternion_to_rotation_matrix(q.x, q.y, q.z, q.w)
+
+        return Transformation(rotation, position)
