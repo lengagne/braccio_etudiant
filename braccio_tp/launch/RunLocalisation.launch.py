@@ -1,6 +1,6 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
-# from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -9,7 +9,7 @@ import os
 
 def generate_launch_description():
     # Arguments
-
+    pkg_share = get_package_share_directory('braccio_tp')
     pkg_braccion_common = get_package_share_directory('braccio_common')
 
     camera_with_tags_launch = IncludeLaunchDescription(
@@ -18,13 +18,28 @@ def generate_launch_description():
         ),
     )
 
+
+    # Chemin vers le fichier de markers
+    default_markers_file = os.path.join(pkg_share, 'config', 'static_markers.yaml')
+
+
+    static_markers_arg = DeclareLaunchArgument(
+        'static_markers',
+        default_value=default_markers_file,
+        description='Path to static markers YAML file'
+    )
+
     localisation_node = Node(
         package='braccio_tp',
-        executable='localisation',
+        executable='marker_broadcast',
         name='localisation',
+        parameters=[{
+            'static_markers': LaunchConfiguration('static_markers')
+        }],
     )
 
     return LaunchDescription([
+        static_markers_arg,
         camera_with_tags_launch,
         localisation_node,
     ])
