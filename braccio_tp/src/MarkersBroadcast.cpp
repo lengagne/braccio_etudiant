@@ -34,11 +34,8 @@ public:
 private:
     void callback(const tag_msgs::msg::TagPoseArray::SharedPtr msg)
     {
-        RCLCPP_INFO(this->get_logger(), "callback STEP 1");
         camera_localize_->ReceiveTagInformation(*msg);
-        RCLCPP_INFO(this->get_logger(), "callback STEP 2");
         camera_localize_->PublishTF();
-        RCLCPP_INFO(this->get_logger(), "callback STEP 3");
     }
     
     std::shared_ptr<Localizer> camera_localize_;

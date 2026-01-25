@@ -27,7 +27,6 @@
             <material name="white">
                 <color rgba="1.0 1.0 1.0 1.0"/>
             </material>
-            <origin rpy="0 0 3.1416" xyz="0 0.004 0" />
         </visual>
     </link>
     <link name="braccio_base_black">
@@ -38,7 +37,6 @@
             <material name="black">
                 <color rgba="0 0 0 0.50" />
             </material>
-            <origin rpy="0 0 3.1416" xyz="0 0.004 0" />
         </visual>
     </link>
 

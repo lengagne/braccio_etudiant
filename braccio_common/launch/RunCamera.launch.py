@@ -44,7 +44,7 @@ def generate_launch_description():
             'camera_name': 'usb_cam',  # <-- IMPORTANT: d
             'camera_info_url': camera_info_url,  # <-- Chemin vers le fichier de calibration
         }],
-        output='screen'
+        # output='screen'
     )
 
     # Node rqt_image_view

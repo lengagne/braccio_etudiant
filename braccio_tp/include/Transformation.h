@@ -13,6 +13,7 @@
 
 #include "Eigen/Dense"
 #include "Eigen/Core"
+#include <iostream>
 
 // retourne une matrice de rotation a partir de roll pitch yaw (en radian)
 // a completer dans le fichier Transformation.cpp       
@@ -102,7 +103,7 @@ public :
             double a = 0.5*sqrt(rotation(0,0)+rotation(1,1)+rotation(2,2)+1);
             out.orientation.w = a;
             out.orientation.x = (rotation(2,1) - rotation(1,2))/(4*a);
-            out.orientation.y = (rotation(0,2) - rotation(2,0))/(4*a); 
+            out.orientation.y = (rotation(0,2) - rotation(2,0))/(4*a);
             out.orientation.z = (rotation(1,0) - rotation(0,1))/(4*a);
             
             
@@ -133,11 +134,50 @@ public :
         transform.transform.translation.y = position(1);
         transform.transform.translation.z = position(2);
 
-        double a = 0.5*sqrt(rotation(0,0) + rotation(1,1) + rotation(2,2) + 1);
-        transform.transform.rotation.w = a;
-        transform.transform.rotation.x = (rotation(2,1) - rotation(1,2))/(4*a);
-        transform.transform.rotation.y = (rotation(0,2) - rotation(2,0))/(4*a);
-        transform.transform.rotation.z = (rotation(1,0) - rotation(0,1))/(4*a);
+
+        // std::cout<<"rotation = "<< rotation <<std::endl;
+        // double a = 0.5*sqrt(rotation(0,0) + rotation(1,1) + rotation(2,2) + 1);
+        // transform.transform.rotation.w = a;
+        // transform.transform.rotation.x = (rotation(2,1) - rotation(1,2))/(4*a);
+        // transform.transform.rotation.y = (rotation(0,2) - rotation(2,0))/(4*a);
+        // transform.transform.rotation.z = (rotation(1,0) - rotation(0,1))/(4*a);
+        // std::cout<<"quaternion = ["<< transform.transform.rotation.w<<"|"
+        //                             << transform.transform.rotation.x<<"|"
+        //                             << transform.transform.rotation.y<<"|"
+        //                             << transform.transform.rotation.z<<"]"<<std::endl;
+
+        // Conversion matrice de rotation → quaternion (méthode robuste)
+        double trace = rotation(0,0) + rotation(1,1) + rotation(2,2);
+        double w, x, y, z;
+
+        if (trace > 0) {
+            double s = 0.5 / sqrt(trace + 1.0);
+            w = 0.25 / s;
+            x = (rotation(2,1) - rotation(1,2)) * s;
+            y = (rotation(0,2) - rotation(2,0)) * s;
+            z = (rotation(1,0) - rotation(0,1)) * s;
+        }
+        else if (rotation(0,0) > rotation(1,1) && rotation(0,0) > rotation(2,2)) {
+            double s = 2.0 * sqrt(1.0 + rotation(0,0) - rotation(1,1) - rotation(2,2));
+            w = (rotation(2,1) - rotation(1,2)) / s;
+            x = 0.25 * s;
+            y = (rotation(0,1) + rotation(1,0)) / s;
+            z = (rotation(0,2) + rotation(2,0)) / s;
+        }
+        else if (rotation(1,1) > rotation(2,2)) {
+            double s = 2.0 * sqrt(1.0 + rotation(1,1) - rotation(0,0) - rotation(2,2));
+            w = (rotation(0,2) - rotation(2,0)) / s;
+            x = (rotation(0,1) + rotation(1,0)) / s;
+            y = 0.25 * s;
+            z = (rotation(1,2) + rotation(2,1)) / s;
+        }
+        else {
+            double s = 2.0 * sqrt(1.0 + rotation(2,2) - rotation(0,0) - rotation(1,1));
+            w = (rotation(1,0) - rotation(0,1)) / s;
+            x = (rotation(0,2) + rotation(2,0)) / s;
+            y = (rotation(1,2) + rotation(2,1)) / s;
+            z = 0.25 * s;
+        }
 
         return transform;
     }

@@ -3,7 +3,6 @@
 void Localizer::ReceiveTagInformation(  const tag_msgs::msg::TagPoseArray& msg,
                                         unsigned int camera_id)
 {
-    RCLCPP_INFO(node_->get_logger(), "On recoit %d marqueurs", reference_markers.size());
     // la camera percoit "nb_markers" marqueurs.
     unsigned int nb_markers = msg.tags.size();
     Transformation Trans;
@@ -12,23 +11,20 @@ void Localizer::ReceiveTagInformation(  const tag_msgs::msg::TagPoseArray& msg,
     int first_id_seen = -1;
     for (unsigned int i=0;i<reference_markers.size();i++)
     {
-        RCLCPP_INFO(node_->get_logger(), "On recoit le marqueur %d",reference_markers[i].id);
         if (FoundMarker(msg,reference_markers[i].id,Trans))   if (reference_markers[i].already_seen)    // on vérifie qu'on a deja vu le marqueur
         {
             first_id_seen = i;
-            RCLCPP_INFO(node_->get_logger(), "Compute camera pose");
-            
             // A Completer
             // calcul de la pose de la camera  dans le repere monde : cameras_poses[camera_id]
             // en fonction de la pose du marqueur de reference dans le repere monde : reference_markers[i].pose
             // et de la pose du marqueur de reference dans le repere camera : Trans
+            // RCLCPP_INFO_STREAM(node_->get_logger(), "marker("<<reference_markers[i].id<<") = " << reference_markers[i].pose);
             cameras_poses[camera_id] = reference_markers[i].pose * Trans.inverse();
             
             break; // pour arreter la boucle for des qu'on trouve un marqueur
         }
     }    
     
-   RCLCPP_INFO(node_->get_logger(), "Fin de calcul de la pose camera");
     // maintenant on localise tous les autres marqueurs fixes dans le repere 1 (si ils ne sont pas connus)
     for (unsigned int i=first_id_seen+1;i<reference_markers.size();i++)
     {
@@ -39,10 +35,10 @@ void Localizer::ReceiveTagInformation(  const tag_msgs::msg::TagPoseArray& msg,
             // calcul de la pose du marqueur de reference dans le repere monde : reference_markers[i].pose
             // en fonction de la pose de la camera  dans le repere monde : cameras_poses[camera_id]
             // et de la pose du marqueur de reference dans le repere camera : Trans
-           reference_markers[i].pose = Transformation();
+           reference_markers[i].pose = cameras_poses[camera_id]*Trans;
         }
     }      
-    RCLCPP_INFO(node_->get_logger(), "Fin de calcul de la pose des marqueurs fixes");
+
 //     // maintenant on regarde les objets
 //     for (int i=0;i<objects.size();i++)
 //     {
@@ -202,29 +198,25 @@ void Localizer::InitStaticMarkers(const std::string & filename )
 
 void Localizer::PublishTF()
 {
-    RCLCPP_INFO(node_->get_logger(), "Localizer::PublishTF STEP 1");
     // frame_vector_.clear();
     
     // publie reperes cameras
     for (int i=0;i<nb_cameras;i++)
     {      
-        RCLCPP_INFO(node_->get_logger(), "Localizer::PublishTF STEP %d -a", i);
         // frame_vector_.push_back(tf::StampedTransform(cameras_poses[i].convertToTF(), ros::Time::now(),ref,"camera_"+std::to_string(i)));
 
         auto transform = cameras_poses[i].convertToTransformStamped( ref, "camera_"+std::to_string(i), node_->now());
-        RCLCPP_INFO(node_->get_logger(), "Localizer::PublishTF STEP %d -b", i);
         br_->sendTransform(transform);
-        RCLCPP_INFO(node_->get_logger(), "Localizer::PublishTF STEP %d -c", i);
     }
     
-    // // publie repere marqueur fixes
-    // for (int i=0;i<reference_markers.size();i++)    if (reference_markers[i].already_seen)
-    // {
-    //     // frame_vector_.push_back(tf::StampedTransform(reference_markers[i].pose.convertToTF(), ros::Time::now(),ref,"marker_"+std::to_string(reference_markers[i].id)));
-    //
-    //     auto transform = reference_markers[i].pose.convertToTransformStamped( ref, "marker_"+std::to_string(reference_markers[i].id), node_->now());
-    //     br_->sendTransform(transform);
-    // }
+    // publie repere marqueur fixes
+    for (int i=0;i<reference_markers.size();i++)    if (reference_markers[i].already_seen)
+    {
+        // frame_vector_.push_back(tf::StampedTransform(reference_markers[i].pose.convertToTF(), ros::Time::now(),ref,"marker_"+std::to_string(reference_markers[i].id)));
+        auto transform = reference_markers[i].pose.convertToTransformStamped( ref, "marker_"+std::to_string(reference_markers[i].id), node_->now());
+
+        br_->sendTransform(transform);
+    }
     
     // for (int i=0;i<objects.size();i++)  if( objects[i].IsDefined())
     // {
@@ -234,7 +226,6 @@ void Localizer::PublishTF()
     // envoie les informations sur /tf
     // br_.sendTransform(frame_vector_);
 
-    RCLCPP_INFO(node_->get_logger(), "Localizer::PublishTF FIN");
 }
 
 

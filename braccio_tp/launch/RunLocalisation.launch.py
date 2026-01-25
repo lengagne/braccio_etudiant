@@ -45,6 +45,7 @@ def generate_launch_description():
         parameters=[{
             'static_markers': LaunchConfiguration('static_markers')
         }],
+        output='screen'
     )
 
     return LaunchDescription([

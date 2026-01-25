@@ -49,11 +49,11 @@ class ArucoToTagConverter(Node):
         # Publier
         self.tag_pub.publish(tag_array)
 
-        if len(tag_array.tags) > 0:
-            self.get_logger().info(
-                f'Converti {len(tag_array.tags)} marqueurs ArUco en TagPoseArray',
-                throttle_duration_sec=1.0
-            )
+        # if len(tag_array.tags) > 0:
+        #     self.get_logger().info(
+        #         f'Converti {len(tag_array.tags)} marqueurs ArUco en TagPoseArray',
+        #         throttle_duration_sec=1.0
+        #     )
 
 
 def main(args=None):
