@@ -28,6 +28,8 @@ setup(
     entry_points={
         'console_scripts': [
             'aruco_to_tag_converter=braccio_common.aruco_to_tag_converter:main',
+            'image_converter=braccio_common.image_converter:main',
+            'camera_calibrator=braccio_common.camera_calibrator:main',
         ],
     },
 )

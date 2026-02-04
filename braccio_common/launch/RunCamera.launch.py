@@ -17,7 +17,8 @@ def generate_launch_description():
 
     # Configuration pour utiliser l'argument
     camera_device = LaunchConfiguration('camera_device')
-    camera_info_url = 'file://' + os.path.expanduser('~/.ros/camera_info/usb_cam.yaml')
+    camera_info_url = 'file://' + os.path.join(get_package_share_directory('braccio_tp'), 'config', 'usb_cam.yaml')
+
 
 
     # Chemin vers le fichier de config des april tags

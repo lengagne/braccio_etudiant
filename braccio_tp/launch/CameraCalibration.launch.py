@@ -7,10 +7,10 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
     # Arguments
-    webcam_arg = DeclareLaunchArgument(
-        'webcam',
+    camera_device_arg = DeclareLaunchArgument(
+        'camera_device',
         default_value='/dev/video0',
-        description='Chemin du périphérique webcam'
+        description='Chemin du périphérique camera_device'
     )
 
     pattern_width_arg = DeclareLaunchArgument(
@@ -38,7 +38,7 @@ def generate_launch_description():
     )
 
     # Configurations
-    webcam = LaunchConfiguration('webcam')
+    camera_device = LaunchConfiguration('camera_device')
     pattern_width = LaunchConfiguration('pattern_width')
     pattern_height = LaunchConfiguration('pattern_height')
     square_size = LaunchConfiguration('square_size')
@@ -51,7 +51,7 @@ def generate_launch_description():
         name='usb_cam',
         namespace='usb_cam',
         parameters=[{
-            'video_device': webcam,
+            'video_device': camera_device,
             'framerate': 30.0,
             'image_width': 640,
             'image_height': 480,
@@ -64,7 +64,7 @@ def generate_launch_description():
     )
 
     image_converter_node = Node(
-        package='braccio_tp',
+        package='braccio_common',
         executable='image_converter',  # Script à créer
         name='image_converter',
         remappings=[
@@ -76,7 +76,7 @@ def generate_launch_description():
 
     # Node de calibration OpenCV
     calibrator_node = Node(
-        package='braccio_tp',
+        package='braccio_common',
         executable='camera_calibrator',
         name='camera_calibrator',
         parameters=[{
@@ -92,7 +92,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        webcam_arg,
+        camera_device_arg,
         pattern_width_arg,
         pattern_height_arg,
         square_size_arg,

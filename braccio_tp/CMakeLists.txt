@@ -50,18 +50,33 @@ add_library(Transformation
   student/Transformation.cpp
 )
 ament_target_dependencies(Transformation ${dependencies})
+target_link_libraries(Transformation yaml-cpp)
+
 
 # Localization library
 add_library(Localization
   student/Localizer.cpp
 )
 ament_target_dependencies(Localization ${dependencies})
-target_link_libraries(Localization Transformation yaml-cpp)
+target_link_libraries(Localization Transformation )
+
+# robot library
+add_library(Robot
+  student/Robot.cpp
+)
+ament_target_dependencies(Robot ${dependencies})
+target_link_libraries(Robot Transformation )
 
 # marker_broadcast executable
 add_executable(marker_broadcast src/MarkersBroadcast.cpp)
 ament_target_dependencies(marker_broadcast ${dependencies})
 target_link_libraries(marker_broadcast Localization)
+
+
+# marker_broadcast executable
+add_executable(check_mgd src/CheckMGD.cpp)
+ament_target_dependencies(check_mgd ${dependencies})
+target_link_libraries(check_mgd Robot Localization)
 
 # # rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")
 # # target_link_libraries(marker_broadcast "${cpp_typesupport_target}")
@@ -118,7 +133,7 @@ target_link_libraries(marker_broadcast Localization)
 # Install executables
 install(TARGETS
   marker_broadcast
-  # check_MGD
+  check_mgd
   # check_inverse_kinematic_joystick
   # check_control_joystick
   # robot_control_cube
@@ -131,7 +146,7 @@ install(TARGETS
 install(TARGETS
   Transformation
   Localization
-  # RobotModel
+  Robot
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -156,7 +171,7 @@ if(BUILD_TESTING)
 endif()
 
 ament_export_include_directories(include)
-ament_export_libraries(Transformation Localization)
+ament_export_libraries(Transformation Localization Robot)
 ament_export_dependencies(${dependencies})
 
 ament_package()
