@@ -10,6 +10,7 @@ Panels:
         - /RobotModel1/Description Topic1
         - /TF1
         - /TF1/Frames1
+        - /RobotModel2
       Splitter Ratio: 0.5
     Tree Height: 652
   - Class: rviz_common/Selection
@@ -132,6 +133,12 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
+        CubeBleu:
+          Value: true
+        CubeJaune:
+          Value: true
+        CubeVert:
+          Value: true
         base_link:
           Value: false
         braccio_base_black:
@@ -146,9 +153,15 @@ Visualization Manager:
           Value: false
         left_gripper_link:
           Value: false
+        marker_100:
+          Value: true
         marker_101:
           Value: true
         marker_102:
+          Value: true
+        marker_103:
+          Value: true
+        marker_104:
           Value: true
         marker_105:
           Value: true
@@ -167,6 +180,12 @@ Visualization Manager:
       Show Names: true
       Tree:
         base_link:
+          CubeBleu:
+            {}
+          CubeJaune:
+            {}
+          CubeVert:
+            {}
           braccio_base_black:
             {}
           braccio_base_link:
@@ -182,14 +201,51 @@ Visualization Manager:
             {}
           camera_0:
             {}
+          marker_100:
+            {}
           marker_101:
             {}
           marker_102:
+            {}
+          marker_103:
+            {}
+          marker_104:
             {}
           marker_105:
             {}
       Update Interval: 0
       Value: true
+    - Alpha: 1
+      Class: rviz_default_plugins/RobotModel
+      Collision Enabled: false
+      Description File: ""
+      Description Source: Topic
+      Description Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /cubes/robot_description
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        CubeJaune:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+      Mass Properties:
+        Inertia: false
+        Mass: false
+      Name: RobotModel
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -251,10 +307,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.3903983533382416
+      Pitch: 0.6453981995582581
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.820399045944214
+      Yaw: 1.4753965139389038
     Saved: ~
 Window Geometry:
   Displays:

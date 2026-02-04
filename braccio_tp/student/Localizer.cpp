@@ -4,7 +4,6 @@ void Localizer::ReceiveTagInformation(  const tag_msgs::msg::TagPoseArray& msg,
                                         unsigned int camera_id)
 {
     // la camera percoit "nb_markers" marqueurs.
-    unsigned int nb_markers = msg.tags.size();
     Transformation Trans;
     
     // on localise la caméra par rapport au premier marqueur fixe qui est vu.
@@ -39,29 +38,29 @@ void Localizer::ReceiveTagInformation(  const tag_msgs::msg::TagPoseArray& msg,
         }
     }      
 
-//     // maintenant on regarde les objets
-//     for (int i=0;i<objects.size();i++)
-//     {
-//         objects[i].ReInitPoseDefined();
-//         std::vector<unsigned int> ids = objects[i].GetIds();
-//         unsigned int nb = ids.size();
-//         for (int j=0;j<nb;j++)
-//         {
-//             // pour chaque objet on regarde si on a vu un des marqueurs
-//             if( FoundMarker(msg,ids[j],Trans))
-//             {
-//                 Transformation local_pose = objects[i].GetLocalPose(j);
-//                 // Calcul de la pose de l'objet dans le repere monde : object_pose
-//                 // en fonction de la pose de la camera dans le repere monde : cameras_poses[camera_id]
-//                 // de la pose du marqueur dans le repere de l'objet : local_pose
-//                 // et de la pose du marqueur dans le repere camera : Trans
-//                 Transformation object_pose; // =
-//
-//                 // on stoque la valeur
-//                 objects[i].SetGlobalPose( object_pose);
-//             }
-//         }
-//     }
+    // maintenant on regarde les objets
+    for (unsigned int i=0;i<objects.size();i++)
+    {
+        objects[i].ReInitPoseDefined();
+        std::vector<unsigned int> ids = objects[i].GetIds();
+        unsigned int nb = ids.size();
+        for (unsigned int j=0;j<nb;j++)
+        {
+            // pour chaque objet on regarde si on a vu un des marqueurs
+            if( FoundMarker(msg,ids[j],Trans))
+            {
+                Transformation local_pose = objects[i].GetLocalPose(j);
+                // Calcul de la pose de l'objet dans le repere monde : object_pose
+                // en fonction de la pose de la camera dans le repere monde : cameras_poses[camera_id]
+                // de la pose du marqueur dans le repere de l'objet : local_pose
+                // et de la pose du marqueur dans le repere camera : Trans
+                Transformation object_pose = cameras_poses[camera_id] * Trans * local_pose.inverse();
+
+                // on stoque la valeur
+                objects[i].SetGlobalPose( object_pose);
+            }
+        }
+    }
 }
 
 
@@ -75,9 +74,6 @@ void Localizer::ReceiveTagInformation(  const tag_msgs::msg::TagPoseArray& msg,
 Localizer::Localizer(rclcpp::Node* node,unsigned int nb_cam ): node_(node), nb_cameras(nb_cam)
 {
     SetNbCamera(nb_cam);
-    // pub_objects = n.advertise<auro8_tps::ObjectPoseArray> ( "/objects", 1);
-    // pub_pairs = n.advertise<auro8_tps::ObjectErrorArray> ( "/pairs", 1);
-
     br_ = std::make_shared<tf2_ros::TransformBroadcaster>(*node);
 }
 
@@ -88,16 +84,16 @@ Localizer::~Localizer()
 
 void Localizer::AddObjectStaticMarkers(const YAML::Node& node)
 {
-    // Object new_object( node["name"].as<std::string>() ) ;
-    // YAML::Node config = node;
-    // for (YAML::const_iterator it=config.begin();it!=config.end();++it)
-    // {
-    //     if ( it->first.as<std::string>() == "marker" )
-    //     {
-    //         new_object.add_marker(ReadMarkerInfo(it->second));
-    //     }
-    // }
-    // objects.push_back(new_object);
+    Object new_object( node["name"].as<std::string>() ) ;
+    YAML::Node config = node;
+    for (YAML::const_iterator it=config.begin();it!=config.end();++it)
+    {
+        if ( it->first.as<std::string>() == "marker" )
+        {
+            new_object.add_marker(ReadMarkerInfo(it->second));
+        }
+    }
+    objects.push_back(new_object);
 }
 
 void Localizer::AddReferenceStaticMarkers(const YAML::Node& node)
@@ -113,11 +109,11 @@ void Localizer::AddReferenceStaticMarkers(const YAML::Node& node)
 }
 
 bool Localizer::FoundMarker(    const tag_msgs::msg::TagPoseArray& msg,
-                                unsigned int id,
+                                const unsigned int id,
                                 Transformation & marker)
 {
     unsigned int nb_markers = msg.tags.size();
-    for (int i=0;i<nb_markers;i++)
+    for (unsigned int i=0;i<nb_markers;i++)
     {
         const tag_msgs::msg::TagPose& m = msg.tags[i];
         if (m.id == id)
@@ -139,10 +135,10 @@ void Localizer::InitStaticMarkers(const std::string & filename )
         {
             RCLCPP_INFO(node_->get_logger(), "AddReferenceStaticMarkers");
             AddReferenceStaticMarkers(it->second);
-        // }else if ( it->first.as<std::string>() == "object" )
-        // {
-        //     RCLCPP_INFO(node_->get_logger(), "AddObjectStaticMarkers");
-        //     AddObjectStaticMarkers(it->second);
+        }else if ( it->first.as<std::string>() == "object" )
+        {
+            RCLCPP_INFO(node_->get_logger(), "AddObjectStaticMarkers");
+            AddObjectStaticMarkers(it->second);
         // }else if ( it->first.as<std::string>() == "pair" )
         // {
         //     RCLCPP_INFO(node_->get_logger(), "AddPair");
@@ -201,7 +197,7 @@ void Localizer::PublishTF()
     // frame_vector_.clear();
     
     // publie reperes cameras
-    for (int i=0;i<nb_cameras;i++)
+    for (unsigned int i=0;i<nb_cameras;i++)
     {      
         // frame_vector_.push_back(tf::StampedTransform(cameras_poses[i].convertToTF(), ros::Time::now(),ref,"camera_"+std::to_string(i)));
 
@@ -210,18 +206,18 @@ void Localizer::PublishTF()
     }
     
     // publie repere marqueur fixes
-    for (int i=0;i<reference_markers.size();i++)    if (reference_markers[i].already_seen)
+    for (unsigned int i=0;i<reference_markers.size();i++)    if (reference_markers[i].already_seen)
     {
         // frame_vector_.push_back(tf::StampedTransform(reference_markers[i].pose.convertToTF(), ros::Time::now(),ref,"marker_"+std::to_string(reference_markers[i].id)));
         auto transform = reference_markers[i].pose.convertToTransformStamped( ref, "marker_"+std::to_string(reference_markers[i].id), node_->now());
-
         br_->sendTransform(transform);
     }
     
-    // for (int i=0;i<objects.size();i++)  if( objects[i].IsDefined())
-    // {
-    //     frame_vector_.push_back(tf::StampedTransform(objects[i].GetGlobalPose().convertToTF(), ros::Time::now(),ref,objects[i].GetName()));
-    // }
+    for (unsigned int i=0;i<objects.size();i++)  if( objects[i].IsDefined())
+    {
+        auto transform = objects[i].GetGlobalPose().convertToTransformStamped( ref, objects[i].GetName(), node_->now());
+        br_->sendTransform(transform);
+    }
     
     // envoie les informations sur /tf
     // br_.sendTransform(frame_vector_);

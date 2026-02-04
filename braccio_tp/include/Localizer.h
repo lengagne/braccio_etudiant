@@ -10,6 +10,10 @@
 
 class Localizer
 {
+private :
+    rclcpp::Node* node_ = nullptr;
+    unsigned int nb_cameras=1;    // number of possible camera used.
+
 public:
     Localizer(rclcpp::Node* node,unsigned int nb_cam = 1);
     ~Localizer();
@@ -41,22 +45,22 @@ private:
     void AddReferenceStaticMarkers(const YAML::Node& node);
       
     bool FoundMarker(   const tag_msgs::msg::TagPoseArray& msg,
-                        unsigned int id,
+                        const unsigned int id,
                         Transformation & marker);
     
     
     marker ReadMarkerInfo( const YAML::Node& node);
     
-    unsigned int nb_cameras;    // number of possible camera used.
+
     
     bool publish_markers_on_tf = true;
     
     
-    // std::vector< Object > objects;  // list des objets mobiles.
+    std::vector< Object > objects;  // list des objets mobiles.
     std::vector< Transformation> cameras_poses; // pose of the camera in the world frame.
     std::vector< marker > reference_markers; // define the pose of static markers in world frames
     
-    rclcpp::Node* node_;
+
     // to publish on TF
     std::string ref = "base_link";
     // tf::TransformBroadcaster br;

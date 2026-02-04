@@ -12,19 +12,18 @@ def generate_launch_description():
 
     # Chemin vers le fichier URDF
     urdf_file = os.path.join(pkg_share, 'urdf', 'braccio_arm.urdf')
-    # Ou si c'est un xacro :
-    # urdf_file = os.path.join(pkg_share, 'urdf', 'braccio.xacro')
+    cubes_file = os.path.join(pkg_share, 'urdf', 'Cubes.urdf')
 
     # Charger l'URDF
     robot_description = ParameterValue(
         Command(['cat ', urdf_file]),
         value_type=str
     )
-    # Si c'est un fichier xacro, utilisez plutôt :
-    # robot_description = ParameterValue(
-    #     Command(['xacro ', urdf_file]),
-    #     value_type=str
-    # )
+
+    cubes_description = ParameterValue(
+        Command(['cat ', cubes_file]),
+        value_type=str
+    )
 
     # Robot State Publisher - publie les transformations du robot
     robot_state_publisher_node = Node(
@@ -34,6 +33,16 @@ def generate_launch_description():
         output='screen',
         parameters=[{'robot_description': robot_description}]
     )
+
+    cube_state_publisher_node = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='robot_state_publisher_cubes',
+        namespace='cubes',
+        output='screen',
+        parameters=[{'robot_description': cubes_description}]
+    )
+
 
     # Joint State Publisher GUI - pour bouger les joints manuellement
     joint_state_publisher_gui_node = Node(
@@ -58,5 +67,6 @@ def generate_launch_description():
     return LaunchDescription([
         robot_state_publisher_node,
         joint_state_publisher_gui_node,
+        cube_state_publisher_node,
         rviz_node,
     ])

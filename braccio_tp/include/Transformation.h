@@ -148,7 +148,11 @@ public :
 
         // Conversion matrice de rotation → quaternion (méthode robuste)
         double trace = rotation(0,0) + rotation(1,1) + rotation(2,2);
-        double w, x, y, z;
+        double& w = transform.transform.rotation.w;
+        double& x = transform.transform.rotation.x;
+        double& y = transform.transform.rotation.y;
+        double& z = transform.transform.rotation.z;
+        // , x, y, z;
 
         if (trace > 0) {
             double s = 0.5 / sqrt(trace + 1.0);

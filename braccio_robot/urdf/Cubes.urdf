@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<robot name="Cubes">
+    <link name="base_link"/>
+
+    <link name="CubeJaune">
+        <visual>
+            <geometry>
+                <box size="0.04 0.04 0.04" />
+            </geometry>
+            <material name="yellow">
+                <color rgba="1 1 0 1" />
+            </material>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+        </visual>
+    </link>
+
+    <link name="CubeBleu">
+        <visual>
+            <geometry>
+                <box size="0.04 0.04 0.04" />
+            </geometry>
+            <material name="blue">
+                <color rgba="0 0 1 1" />
+            </material>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+        </visual>
+    </link>
+
+    <link name="CubeVert">
+        <visual>
+            <geometry>
+                <box size="0.04 0.04 0.04" />
+            </geometry>
+            <material name="green">
+                <color rgba="0 1 0 1" />
+            </material>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+        </visual>
+    </link>
+
+    <joint name="joint_yellow" type="floating">
+        <parent link="base_link"/>
+        <child link="CubeJaune"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>  <!-- Position initiale -->
+    </joint>
+    <joint name="joint_blue" type="floating">
+        <parent link="base_link"/>
+        <child link="CubeBleu"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>  <!-- Position initiale -->
+    </joint>
+    <joint name="joint_green" type="floating">
+        <parent link="base_link"/>
+        <child link="CubeVert"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>  <!-- Position initiale -->
+    </joint>
+
+</robot>
