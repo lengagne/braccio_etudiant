@@ -37,9 +37,9 @@ def generate_launch_description():
         parameters=[{
             'video_device': camera_device,
             'framerate': 30.0,
-            'image_width': 640,
-            'image_height': 480,
-            'pixel_format': 'yuyv',
+            'image_width': 1024,
+            'image_height': 768,
+            'pixel_format': 'mjpeg2rgb',
             'camera_frame_id': 'usb_cam',
             'io_method': 'mmap',
             'camera_name': 'usb_cam',  # <-- IMPORTANT: d

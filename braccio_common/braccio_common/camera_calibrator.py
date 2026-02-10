@@ -63,18 +63,16 @@ class CameraCalibrator(Node):
 
     def image_callback(self, msg):
         try:
-            # Convertir l'image ROS en OpenCV
-            if msg.encoding in ['yuv422_yuy2', 'yuyv']:
-                yuv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
-                cv_image = cv2.cvtColor(yuv_image, cv2.COLOR_YUV2BGR_YUY2)
-            elif msg.encoding == 'rgb8':
-                rgb_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='rgb8')
-                cv_image = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2BGR)
-            else:
-                cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+            cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
+
+            if cv_image is None or cv_image.size == 0:
+                self.get_logger().warn('Image vide reçue, frame ignorée')
+                return
 
             if self.img_shape is None:
-                self.img_shape = cv_image.shape[:2]
+                h, w = cv_image.shape[:2]
+                self.img_shape = (w, h)
+                # self.img_shape = cv_image.shape[:2]
 
             # Convertir en niveaux de gris pour la détection
             gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
@@ -112,6 +110,8 @@ class CameraCalibrator(Node):
             cv2.putText(display_image, f'Images: {self.images_captured}/{self.num_images}',
                        (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
 
+            if display_image is None:
+                return
             cv2.imshow('Camera Calibration', display_image)
 
             # Gérer les touches clavier

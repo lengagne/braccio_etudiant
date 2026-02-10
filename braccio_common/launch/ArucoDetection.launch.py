@@ -18,7 +18,7 @@ def generate_launch_description():
             # config_file,
         {
             'image_is_rectified': True,
-            'marker_size': 0.03,  # taille en mètres
+            'marker_size': 0.024,  # taille en mètres
             # # Paramètres de visualisation (ca ne change rien) , FIXME a voir en le mettant dans un config file
             # 'axis_length': 0.5,      # Axes plus grands (en mètres)
             # 'axis_thickness': 3,     # Épaisseur des axes

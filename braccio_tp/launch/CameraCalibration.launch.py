@@ -4,8 +4,13 @@ from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from ament_index_python.packages import get_package_share_directory
+import os
 
 def generate_launch_description():
+
+    pkg_braccion_common = get_package_share_directory('braccio_common')
+
     # Arguments
     camera_device_arg = DeclareLaunchArgument(
         'camera_device',
@@ -45,36 +50,55 @@ def generate_launch_description():
     num_images = LaunchConfiguration('num_images')
 
     # Node usb_cam
-    usb_cam_node = Node(
-        package='usb_cam',
-        executable='usb_cam_node_exe',
-        name='usb_cam',
-        namespace='usb_cam',
-        parameters=[{
-            'video_device': camera_device,
-            'framerate': 30.0,
-            'image_width': 640,
-            'image_height': 480,
-            'pixel_format': 'yuyv',
-            'camera_frame_id': 'usb_cam',
-            'io_method': 'mmap',
+    # usb_cam_node = Node(
+    #     package='usb_cam',
+    #     executable='usb_cam_node_exe',
+    #     name='usb_cam',
+    #     namespace='usb_cam',
+    #     parameters=[{
+    #         'video_device': camera_device,
+    #         'framerate': 30.0,
+    #         'image_width': 1024,
+    #         'image_height': 768,
+    #         'pixel_format': 'mjpeg2rgb',
+    #         'camera_frame_id': 'usb_cam',
+    #         'io_method': 'mmap',
+    #
+    #     }],
+    #     output='screen'
+    # )
 
-        }],
-        output='screen'
-    )
+    # usb_cam_node = Node(
+    #     package='usb_cam',
+    #     executable='usb_cam_node_exe',
+    #     name='usb_cam',
+    #     namespace='usb_cam',
+    #     parameters=[{
+    #         'video_device': camera_device,
+    #         'framerate': 30.0,
+    #         'image_width': 1024,
+    #         'image_height': 768,
+    #         'pixel_format': 'mjpeg2rgb',
+    #         'camera_frame_id': 'usb_cam',
+    #         'io_method': 'mmap',
+    #         'camera_name': 'usb_cam',  # <-- IMPORTANT: d
+    #         # 'camera_info_url': camera_info_url,  # <-- Chemin vers le fichier de calibration
+    #     }],
+    #     # output='screen'
+    # )
 
-    image_converter_node = Node(
-        package='braccio_common',
-        executable='image_converter',  # Script à créer
-        name='image_converter',
-        remappings=[
-            ('image_in', '/usb_cam/image_raw'),
-            ('image_out', '/usb_cam/image_converted'),
-        ],
-        output='screen'
-    )
+    # image_converter_node = Node(
+    #     package='braccio_common',
+    #     executable='image_converter',  # Script à créer
+    #     name='image_converter',
+    #     remappings=[
+    #         ('image_in', '/usb_cam/image_raw'),
+    #         ('image_out', '/usb_cam/image_converted'),
+    #     ],
+    #     output='screen'
+    # )
 
-    # Node de calibration OpenCV
+    # # Node de calibration OpenCV
     calibrator_node = Node(
         package='braccio_common',
         executable='camera_calibrator',
@@ -91,13 +115,20 @@ def generate_launch_description():
         output='screen'
     )
 
+    camera_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_braccion_common, 'launch', 'RunCamera.launch.py')
+        )
+    )
+
     return LaunchDescription([
         camera_device_arg,
         pattern_width_arg,
         pattern_height_arg,
         square_size_arg,
         num_images_arg,
-        usb_cam_node,
-        image_converter_node,
+        # usb_cam_node,
+        # image_converter_node,
         calibrator_node,
+        camera_launch
     ])
