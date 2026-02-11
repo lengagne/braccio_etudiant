@@ -19,18 +19,14 @@ def generate_launch_description():
         ),
     )
 
-
     rviz2_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_braccion_robot, 'launch', 'SeeRobotOnRviz.launch.py')
         ),
     )
 
-
-
     # Chemin vers le fichier de markers
     default_markers_file = os.path.join(pkg_share, 'config', 'static_markers.yaml')
-
 
     static_markers_arg = DeclareLaunchArgument(
         'static_markers',

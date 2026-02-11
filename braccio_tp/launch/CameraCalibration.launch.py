@@ -49,56 +49,7 @@ def generate_launch_description():
     square_size = LaunchConfiguration('square_size')
     num_images = LaunchConfiguration('num_images')
 
-    # Node usb_cam
-    # usb_cam_node = Node(
-    #     package='usb_cam',
-    #     executable='usb_cam_node_exe',
-    #     name='usb_cam',
-    #     namespace='usb_cam',
-    #     parameters=[{
-    #         'video_device': camera_device,
-    #         'framerate': 30.0,
-    #         'image_width': 1024,
-    #         'image_height': 768,
-    #         'pixel_format': 'mjpeg2rgb',
-    #         'camera_frame_id': 'usb_cam',
-    #         'io_method': 'mmap',
-    #
-    #     }],
-    #     output='screen'
-    # )
-
-    # usb_cam_node = Node(
-    #     package='usb_cam',
-    #     executable='usb_cam_node_exe',
-    #     name='usb_cam',
-    #     namespace='usb_cam',
-    #     parameters=[{
-    #         'video_device': camera_device,
-    #         'framerate': 30.0,
-    #         'image_width': 1024,
-    #         'image_height': 768,
-    #         'pixel_format': 'mjpeg2rgb',
-    #         'camera_frame_id': 'usb_cam',
-    #         'io_method': 'mmap',
-    #         'camera_name': 'usb_cam',  # <-- IMPORTANT: d
-    #         # 'camera_info_url': camera_info_url,  # <-- Chemin vers le fichier de calibration
-    #     }],
-    #     # output='screen'
-    # )
-
-    # image_converter_node = Node(
-    #     package='braccio_common',
-    #     executable='image_converter',  # Script à créer
-    #     name='image_converter',
-    #     remappings=[
-    #         ('image_in', '/usb_cam/image_raw'),
-    #         ('image_out', '/usb_cam/image_converted'),
-    #     ],
-    #     output='screen'
-    # )
-
-    # # Node de calibration OpenCV
+    # Node de calibration OpenCV
     calibrator_node = Node(
         package='braccio_common',
         executable='camera_calibrator',

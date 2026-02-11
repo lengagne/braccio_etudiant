@@ -19,15 +19,22 @@ def generate_launch_description():
         ),
     )
 
-    check_MGD_node = Node(
-        package='braccio_tp',
-        executable='check_mgd',
-        name='check_mgd',
+    joy_node = Node(
+        package='joy',
+        executable='joy_node',
+        name='joy_node',
+        output='screen'
+    )
+
+    pad_to_target_node = Node(
+        package='braccio_common',
+        executable='pad_to_target',
+        name='pad_to_target',
         output='screen'
     )
 
     return LaunchDescription([
-        check_MGD_node,
-        rviz2_launch
-
+        joy_node,
+        rviz2_launch,
+        pad_to_target_node
     ])
