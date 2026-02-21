@@ -4,6 +4,7 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Joy
 from geometry_msgs.msg import PoseStamped
+from std_msgs.msg import Bool
 import math
 
 
@@ -17,6 +18,7 @@ class JoystickTargetPose(Node):
 
         # Publisher target pose
         self.pose_pub = self.create_publisher(PoseStamped, '/target_pose', 10)
+        self.open_pub = self.create_publisher(Bool, '/open_gripper', 10)
 
         # Etat courant de la cible
         self.x = 0.1
@@ -43,6 +45,9 @@ class JoystickTargetPose(Node):
                 [-0.1,0.1,0.1],
             ]
 
+        self.open_gripper = False
+        self.previous_push_gripper = 0
+
     def joy_callback(self, msg: Joy):
 
         # Mapping standard Xbox / Logitech
@@ -62,6 +67,18 @@ class JoystickTargetPose(Node):
 
         if msg.buttons[0] ==0:
             self.previous_push = 0
+
+        if msg.buttons[9] == 1 and self.previous_push_gripper ==0:
+            self.previous_push_gripper = 1
+            self.open_gripper = not self.open_gripper
+            if self.open_gripper:
+                self.get_logger().info("Open Gripper")
+            else:
+                self.get_logger().info("Close Gripper")
+
+        if msg.buttons[9] ==0:
+            self.previous_push_gripper = 0
+
 
 
 
@@ -88,6 +105,10 @@ class JoystickTargetPose(Node):
         pose.pose.orientation.w = math.cos(self.yaw / 2.0)
 
         self.pose_pub.publish(pose)
+
+        msg_gripper = Bool()
+        msg_gripper.data = self.open_gripper
+        self.open_pub.publish(msg_gripper)
 
 
 def main(args=None):

@@ -15,7 +15,7 @@ class AnglesToJointStates(Node):
         self.joint_state_pub = self.create_publisher(JointState, '/joint_states', 10)
 
         # Subscriber pour /angles
-        self.angles_sub = self.create_subscription(Float64MultiArray,'/angles',self.angles_callback,10)
+        self.angles_sub = self.create_subscription(Float64MultiArray,'/joint_angles',self.angles_callback,10)
 
     def angles_callback(self, msg):
         # self.get_logger().info(f"Message reçu sur /angles : {msg.data}")

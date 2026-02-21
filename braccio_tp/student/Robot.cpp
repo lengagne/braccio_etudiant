@@ -207,10 +207,10 @@ double Robot::ComputeControl(   const VECTOR& Qin,
 {
     Eigen::Matrix<double,3,5> Jacobian = ComputeJacobian(Qin);
     Eigen::Matrix<double,5,1> DeltaQ =  Jacobian.transpose() * (  Jacobian * Jacobian.transpose() ).inverse() * (DesiredPosition-CurrentPosition);
-    std::cout<<"Jacobian = "<< Jacobian<<std::endl;
-    std::cout<<"CurrentPosition = "<< CurrentPosition.transpose()<<std::endl;
-    std::cout<<"DesiredPosition = "<< DesiredPosition.transpose()<<std::endl;
-    std::cout<<"DeltaQ = "<< DeltaQ.transpose()<<std::endl;
+    // std::cout<<"Jacobian = "<< Jacobian<<std::endl;
+    // std::cout<<"CurrentPosition = "<< CurrentPosition.transpose()<<std::endl;
+    // std::cout<<"DesiredPosition = "<< DesiredPosition.transpose()<<std::endl;
+    // std::cout<<"DeltaQ = "<< DeltaQ.transpose()<<std::endl;
     for (int i=0;i<5;i++)
         Qout.data[i] = Qin.data[i] + DeltaQ(i)*0.1;    
 
@@ -218,13 +218,13 @@ double Robot::ComputeControl(   const VECTOR& Qin,
     {
         if (Qout.data[i] < qmin[i])
         {
-            std::cout<<"Violation de Q("<<i<<") min"<<std::endl;
+            // std::cout<<"Violation de Q("<<i<<") min"<<std::endl;
             Qout.data[i] = qmin[i];
             
         }
         if (Qout.data[i] > qmax[i])
         {
-            std::cout<<"Violation de Q("<<i<<") max"<<std::endl;
+            // std::cout<<"Violation de Q("<<i<<") max"<<std::endl;
             Qout.data[i] = qmax[i];
             
         }

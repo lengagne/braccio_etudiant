@@ -17,6 +17,9 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg_braccion_robot, 'launch', 'SeeRobotOnRviz.launch.py')
         ),
+        launch_arguments={
+            'use_gui': 'True'
+        }.items()
     )
 
     check_MGD_node = Node(

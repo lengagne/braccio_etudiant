@@ -18,7 +18,7 @@ public:
             this->callback_target(msg);
         });
 
-        publisher_ = this->create_publisher<std_msgs::msg::Float64MultiArray>("angles", 10);
+        publisher_ = this->create_publisher<std_msgs::msg::Float64MultiArray>("/joint_angles", 10);
 
     }
 
