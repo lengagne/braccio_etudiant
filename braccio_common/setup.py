@@ -31,6 +31,7 @@ setup(
             'image_converter=braccio_common.image_converter:main',
             'camera_calibrator=braccio_common.camera_calibrator:main',
             'pad_to_target=braccio_common.pad_to_target:main',
+            'angles_to_joint_states = braccio_common.convert_angle_to_joint_states:main',
         ],
     },
 )

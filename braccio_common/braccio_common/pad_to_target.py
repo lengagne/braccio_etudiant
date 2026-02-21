@@ -30,6 +30,19 @@ class JoystickTargetPose(Node):
 
         self.get_logger().info("Joystick Target Pose Node Started")
 
+        self.count = 0
+        self.previous_push = 0
+        self.targets = [
+                [0.1,0.1,0.1],
+                [0.1,0.1,0.05],
+                [0.1,-0.1,0.05],
+                [0.1,-0.1,0.1],
+                [-0.1,-0.1,0.1],
+                [-0.1,-0.1,0.05],
+                [-0.1,0.1,0.05],
+                [-0.1,0.1,0.1],
+            ]
+
     def joy_callback(self, msg: Joy):
 
         # Mapping standard Xbox / Logitech
@@ -37,6 +50,20 @@ class JoystickTargetPose(Node):
         # axes[1] = stick gauche vertical
         # axes[3] = stick droit horizontal
         # axes[4] = stick droit vertical
+
+        if msg.buttons[0] == 1 and self.previous_push ==0:
+            self.previous_push = 1
+            self.count = self.count +1
+            if self.count > len(self.targets)-1:
+                self.count = 0
+            self.x = self.targets[self.count][0]
+            self.y = self.targets[self.count][1]
+            self.z = self.targets[self.count][2]
+
+        if msg.buttons[0] ==0:
+            self.previous_push = 0
+
+
 
         self.x += msg.axes[1] * self.pos_scale
         self.y += msg.axes[0] * self.pos_scale

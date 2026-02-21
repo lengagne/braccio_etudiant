@@ -1,14 +1,27 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, GroupAction
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 from launch.substitutions import Command
+from launch.conditions import IfCondition, UnlessCondition
 from ament_index_python.packages import get_package_share_directory
 import os
 
 def generate_launch_description():
     pkg_share = get_package_share_directory('braccio_robot')
+
+    use_gui_arg = DeclareLaunchArgument(
+        'use_gui',
+        default_value='True',
+        description='Whether to launch the joint_state_publisher_gui node'
+    )
+
+    use_robot_arg = DeclareLaunchArgument(
+        'use_robot',
+        default_value='False',
+        description='Whether to launch the node to control the robot'
+    )
 
     # Chemin vers le fichier URDF
     urdf_file = os.path.join(pkg_share, 'urdf', 'braccio_arm.urdf')
@@ -49,7 +62,28 @@ def generate_launch_description():
         package='joint_state_publisher_gui',
         executable='joint_state_publisher_gui',
         name='joint_state_publisher_gui',
-        output='screen'
+        output='screen',
+        condition=IfCondition(LaunchConfiguration('use_gui')),
+    )
+
+    # Joint State Publisher GUI - pour bouger les joints manuellement
+    braccio_node = Node(
+        package='ros2_braccio',
+        executable='braccio',
+        name='braccio',
+        output='screen',
+        condition=IfCondition(LaunchConfiguration('use_robot'))
+    )
+
+    convert_angle_node = Node(
+        package='ros2_braccio',
+        executable='convert_joint_angle',
+        name='convert_joint_angle',
+        output='screen',
+        condition=IfCondition(LaunchConfiguration('use_robot')),
+        remappings=[
+            ('braccio/joint_angles','joint_states'),
+        ],
     )
 
     # Fichier de configuration RViz
@@ -65,8 +99,12 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        use_gui_arg,
+        use_robot_arg,
         robot_state_publisher_node,
         joint_state_publisher_gui_node,
         cube_state_publisher_node,
         rviz_node,
+        braccio_node,
+        convert_angle_node
     ])

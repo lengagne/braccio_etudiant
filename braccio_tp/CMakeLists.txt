@@ -76,7 +76,17 @@ target_link_libraries(marker_broadcast Localization)
 # marker_broadcast executable
 add_executable(check_mgd src/CheckMGD.cpp)
 ament_target_dependencies(check_mgd ${dependencies})
-target_link_libraries(check_mgd Robot Localization)
+target_link_libraries(check_mgd Robot)
+
+# marker_broadcast executable
+add_executable(check_mgi src/CheckMGI.cpp)
+ament_target_dependencies(check_mgi ${dependencies})
+target_link_libraries(check_mgi Robot)
+
+# marker_broadcast executable
+add_executable(check_jacobian_control src/CheckJacobianControl.cpp)
+ament_target_dependencies(check_jacobian_control ${dependencies})
+target_link_libraries(check_jacobian_control Robot)
 
 # # rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")
 # # target_link_libraries(marker_broadcast "${cpp_typesupport_target}")
@@ -134,6 +144,8 @@ target_link_libraries(check_mgd Robot Localization)
 install(TARGETS
   marker_broadcast
   check_mgd
+  check_mgi
+  check_jacobian_control
   # check_inverse_kinematic_joystick
   # check_control_joystick
   # robot_control_cube

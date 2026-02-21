@@ -37,10 +37,10 @@ def generate_launch_description():
         output='screen'
     )
 
-    check_control_node = Node(
+    mgi_node = Node(
         package='braccio_tp',
-        executable='check_jacobian_control',
-        name='check_jacobian_control',
+        executable='check_mgi',
+        name='check_mgi',
         output='screen'
     )
 
@@ -51,18 +51,18 @@ def generate_launch_description():
         output='screen'
     )
 
-    # check_MGD_node = Node(
-    #     package='braccio_tp',
-    #     executable='check_mgd',
-    #     name='check_mgd',
-    #     output='screen'
-    # )
+    check_MGD_node = Node(
+        package='braccio_tp',
+        executable='check_mgd',
+        name='check_mgd',
+        output='screen'
+    )
 
     return LaunchDescription([
         joy_node,
         rviz2_launch,
         pad_to_target_node,
-        check_control_node,
+        mgi_node,
         angle_to_joint_state_node,
-        # check_MGD_node
+        check_MGD_node
     ])
