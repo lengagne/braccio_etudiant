@@ -16,9 +16,15 @@ find_package(std_msgs REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/TagPose.msg"
   "msg/TagPoseArray.msg"
+  "action/MoveToPose.action"
   DEPENDENCIES geometry_msgs std_msgs
 )
 
+# find_package(ros2_action_tutorials_interfaces REQUIRED)
+# rosidl_generate_interfaces(${PROJECT_NAME}
+
+  # DEPENDENCIES geometry_msgs std_msgs
+# )
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

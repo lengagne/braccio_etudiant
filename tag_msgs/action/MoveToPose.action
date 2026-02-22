@@ -1,0 +1,12 @@
+# Goal: La pose cible à atteindre
+geometry_msgs/PoseStamped target_pose
+string effector_frame
+---
+# Result: Résultat final
+bool success
+string message
+---
+# Feedback: Progression (pose actuelle et angles des articulations)
+geometry_msgs/PoseStamped current_pose
+std_msgs/Float64MultiArray current_joint_angles
+float64 distance_remaining

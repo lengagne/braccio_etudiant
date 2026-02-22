@@ -4,6 +4,7 @@
 // include qui vient de auro8_tp1
 #include "Transformation.h"
 #include "std_msgs/msg/float64_multi_array.hpp"
+#include <random>
 
 typedef std_msgs::msg::Float64MultiArray VECTOR;
 
@@ -46,6 +47,9 @@ public:
     std::vector<Transformation> TLink;
 
     double PI = 2*asin(1);
+
+    std::mt19937 gen_{std::random_device{}()};
+    std::uniform_real_distribution<double> dis_{-0.01, 0.01};
 };
 
 #endif

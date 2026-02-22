@@ -13,6 +13,7 @@ endif()
 # Find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
@@ -33,6 +34,7 @@ include_directories(
 # Dependencies list for target_link_libraries
 set(dependencies
   rclcpp
+  rclcpp_action
   std_msgs
   sensor_msgs
   geometry_msgs
@@ -87,6 +89,11 @@ target_link_libraries(check_mgi Robot)
 add_executable(check_jacobian_control src/CheckJacobianControl.cpp)
 ament_target_dependencies(check_jacobian_control ${dependencies})
 target_link_libraries(check_jacobian_control Robot)
+
+
+add_executable(jacobian_control_action_server src/ServeurActionJacobianControl.cpp)
+ament_target_dependencies(jacobian_control_action_server ${dependencies})
+target_link_libraries(jacobian_control_action_server Robot)
 
 # # rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")
 # # target_link_libraries(marker_broadcast "${cpp_typesupport_target}")
@@ -146,11 +153,7 @@ install(TARGETS
   check_mgd
   check_mgi
   check_jacobian_control
-  # check_inverse_kinematic_joystick
-  # check_control_joystick
-  # robot_control_cube
-  # pick_and_place
-  # robot_mover
+  jacobian_control_action_server
   DESTINATION lib/${PROJECT_NAME}
 )
 

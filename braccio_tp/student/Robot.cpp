@@ -76,11 +76,6 @@ bool  Robot::ModGeoInverse( const Eigen::Matrix<double,3,1> & pos,
     double q1,q2,q3,q4,q5;
     
     // A COMPLETER
-    
-    double X = pos(0);
-    double Y = pos(1);
-    double Z = pos(2);
-    
     Transformation T;
     T.position = pos;
 
@@ -94,10 +89,10 @@ bool  Robot::ModGeoInverse( const Eigen::Matrix<double,3,1> & pos,
     // premiere hypothese a mettre a jour
     double x= TWrist.position(0);
     double y= TWrist.position(1);
-    double z= TWrist.position(2); // si la pince est verticale  
+    // double z= TWrist.position(2); // si la pince est verticale
 
     //  calcul de q1
-    double dxy = sqrt( x*x+y*y);
+    double dxy = sqrt(x*x+y*y);
     q1= atan2(y/dxy,x/dxy);
     Transformation TShoulder = TStatic[0] * RotZ(q1-PI/2) * TStatic[1];
     Transformation STW = TShoulder.inverse() * TWrist;
@@ -170,7 +165,7 @@ Eigen::Matrix<double,3,5> Robot::ComputeJacobian( const VECTOR& Q)
 {
     Eigen::Matrix<double,3,5> out;
     double delta = 1e-3;
-    Transformation InitPose=ModGeoDirect(Q);
+    // Transformation InitPose=ModGeoDirect(Q);
     Transformation Pose1,Pose2;
     std_msgs::msg::Float64MultiArray Qtmp;  // ROS2: ajout de ::msg
     for (int i=0;i<5;i++)
@@ -211,24 +206,32 @@ double Robot::ComputeControl(   const VECTOR& Qin,
     // std::cout<<"CurrentPosition = "<< CurrentPosition.transpose()<<std::endl;
     // std::cout<<"DesiredPosition = "<< DesiredPosition.transpose()<<std::endl;
     // std::cout<<"DeltaQ = "<< DeltaQ.transpose()<<std::endl;
-    for (int i=0;i<5;i++)
-        Qout.data[i] = Qin.data[i] + DeltaQ(i)*0.1;    
 
-    for (int i=0;i<5;i++)   // on ne vérifie pas le gripper
-    {
-        if (Qout.data[i] < qmin[i])
+    // if (!DeltaQ.allFinite())
+    // {
+        for (int i=0;i<5;i++)
+            Qout.data[i] = Qin.data[i] + DeltaQ(i)*0.05;
+
+        for (int i=0;i<5;i++)   // on ne vérifie pas le gripper
         {
-            // std::cout<<"Violation de Q("<<i<<") min"<<std::endl;
-            Qout.data[i] = qmin[i];
-            
+            if (Qout.data[i] < qmin[i])
+            {
+                // std::cout<<"Violation de Q("<<i<<") min"<<std::endl;
+                Qout.data[i] = qmin[i];
+
+            }
+            if (Qout.data[i] > qmax[i])
+            {
+                // std::cout<<"Violation de Q("<<i<<") max"<<std::endl;
+                Qout.data[i] = qmax[i];
+
+            }
         }
-        if (Qout.data[i] > qmax[i])
-        {
-            // std::cout<<"Violation de Q("<<i<<") max"<<std::endl;
-            Qout.data[i] = qmax[i];
-            
-        }
-    }        
-    
+    // }
+    // else
+    // {
+        // for (int i=0;i<5;i++)
+            // Qout.data[i] = Qin.data[i] + dis_(gen_);
+    // }
     return (DesiredPosition-CurrentPosition).norm();
 }

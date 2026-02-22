@@ -39,8 +39,8 @@ def generate_launch_description():
 
     check_control_node = Node(
         package='braccio_tp',
-        executable='check_jacobian_control',
-        name='check_jacobian_control',
+        executable='jacobian_control_action_server',
+        name='jacobian_control_action_server',
         output='screen'
     )
 
